@@ -1,4 +1,4 @@
-package com.myself223.mvvm.ui.fragments.characters
+package com.myself228.RickAndLoh228.ui.fragments.characters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
-import com.geeks.mvvm15_1j.R
-import com.geeks.mvvm15_1j.databinding.ItemCharactersBinding
+import com.myself223.mvvm.databinding.ItemCharacterBinding
+import com.myself228.RickAndLoh228.R
+import com.myself228.RickAndLoh228.data.model.character.RickAndMortyCharacter
+import com.myself228.RickAndLoh228.databinding.ItemCharactersBinding
 import com.myself228.mvvmloshpeka.data.model.character.RickAndMortyCharacter
 
 class CharacterAdapter : RecyclerView.Adapter<CharacterAdapter.CharacterViewHolder>() {
@@ -20,7 +22,7 @@ class CharacterAdapter : RecyclerView.Adapter<CharacterAdapter.CharacterViewHold
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CharacterViewHolder(
-        ItemCharactersBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        ItemCharacterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun getItemCount() = list.size
@@ -30,7 +32,7 @@ class CharacterAdapter : RecyclerView.Adapter<CharacterAdapter.CharacterViewHold
     }
 
 
-    class CharacterViewHolder(private val binding: ItemCharactersBinding) :
+    class CharacterViewHolder(private val binding: ItemCharacterBinding) :
         ViewHolder(binding.root) {
 
         fun onBind(character: RickAndMortyCharacter) {
@@ -39,7 +41,7 @@ class CharacterAdapter : RecyclerView.Adapter<CharacterAdapter.CharacterViewHold
             binding.itemTvStatus.text = character.status
             binding.itemTvType.text = character.species
             binding.itemTvLastLocation.text = character.location.name
-            Glide.with(binding.root).load(character.image).centerCrop()
+            Glide.with(binding.root).load(character.image).circleCrop()
                 .into(binding.itemImgCharacter)
 
             when (character.status) {

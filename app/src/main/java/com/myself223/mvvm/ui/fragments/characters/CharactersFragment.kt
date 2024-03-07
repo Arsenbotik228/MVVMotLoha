@@ -1,46 +1,34 @@
-package com.myself223.mvvm.ui.fragments.characters
+package com.myself228.RickAndLoh228.ui.fragments.characters
 
-import android.util.Log
 import android.widget.Toast
-import com.myself228.mvvmloshpeka.core.BaseFragment
-import com.myself228.mvvmloshpeka.data.model.BaseMainResponse
-import com.myself228.mvvmloshpeka.data.network.service.ApiService
-import com.myself228.mvvmloshpeka.data.network.service.RetrofitClient
-import com.myself228.mvvmloshpeka.databinding.FragmentCharactersBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
+import com.myself228.RickAndLoh228.common.Resource
+import com.myself228.RickAndLoh228.core.BaseFragment
+import com.myself228.RickAndLoh228.databinding.FragmentCharactersBinding
 
 class CharactersFragment : BaseFragment<FragmentCharactersBinding>() {
     override fun getViewBinding() = FragmentCharactersBinding.inflate(layoutInflater)
     private val adapter: CharacterAdapter by lazy { CharacterAdapter() }
+    private val viewModel:CharactersViewModel by lazy { ViewModelProvider(requireActivity())[CharactersViewModel::class.java] }
 
-    override fun initialize() {
-        binding.rvCharacters.adapter = adapter
-    }
+    override fun initialize() { binding.rvCharacters.adapter = adapter
+    viewModel.getCharacter()}
 
     override fun launchObserver() {
-        val retrofit = RetrofitClient.retrofitInstance.create(ApiService::class.java)
-        retrofit.getAllCharacter().enqueue(object : Callback<BaseMainResponse> {
-
-            override fun onResponse(
-                call: Call<BaseMainResponse>,
-                response: Response<BaseMainResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val characters = response.body()?.results
-                    adapter.setCharacter(characters!!)
+        viewModel.liveData.observe(viewLifecycleOwner) {
+            when(it){
+                is Resource.Loading -> binding.progressBar.isVisible = true
+                is Resource.Success -> {
+                    binding.progressBar.isGone = true
+                    it.data?.results?.let { it1 -> adapter.setCharacter(it1) }
+                }
+                is Resource.Error-> {
+                    binding.progressBar.isGone = true
+                    Toast.makeText(requireContext(), "Error", Toast.LENGTH_SHORT).show()
                 }
             }
-
-            override fun onFailure(call: Call<BaseMainResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "${t.message}", Toast.LENGTH_SHORT).show()
-                Log.e("ololo", "${t.message}")
-            }
-        })
-    }
-
-    companion object {
-        fun newInstance() = CharactersFragment
+        }
     }
 }
